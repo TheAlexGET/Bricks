@@ -32,3 +32,7 @@ body{
   line-height: 23px;
   float: left;
 }
+
+canvas{
+  transform: rotate(180deg);
+}
