@@ -6,18 +6,20 @@ class Brick {
 }
 
 // Entries
+
 const enterBricks = [
-  new Brick(500, 500),
-  new Brick(200, 200),
-  new Brick(300, 250),
-  new Brick(100, 100),
-  new Brick(70, 70),
-  new Brick(70, 70),
-  new Brick(50, 700),
-  new Brick(50, 600),
-  new Brick(750, 50),
-  new Brick(50, 50),
-  new Brick(50, 50),
+  { width: 500, height: 500 },
+  { width: 200, height: 200 },
+  { width: 300, height: 250 },
+  { width: 100, height: 100 },
+  { width: 70, height: 70 },
+  { width: 70, height: 70 },
+  { width: 50, height: 700 },
+  { width: 50, height: 600 },
+  { width: 750, height: 50 },
+  { width: 50, height: 50 },
+  { width: 50, height: 50 },
+  { width: 512, height: 50 },
 ];
 
 //Logic
@@ -63,11 +65,7 @@ class Canvas {
     for (const brick of this.bricks) {
       for (let i = brick.top; i < brick.top + brick.height; i++) {
         for (let j = brick.left; j < brick.left + brick.width; j++) {
-          try {
-            grid[i][j] = true;
-          } catch (e) {
-            // nothing
-          }
+          grid[i][j] = true;
         }
       }
     }
@@ -113,26 +111,115 @@ function isOverlap(canvas, brick, left, top, rotated = false) {
 }
 
 function findBestPlace(canvas, brick) {
+  let bestFit = null;
+  let bestUtilization = 0;
   for (let top = 0; top <= canvas.height - brick.height; top++) {
     for (let left = 0; left <= canvas.width - brick.width; left++) {
-      if (!isOverlap(canvas, brick, left, top)) {
-        return { left, top, rotated: false };
-      } else if (
-        brick.width !== brick.height &&
-        !isOverlap(canvas, brick, left, top, true)
-      ) {
-        return { left, top, rotated: true };
+      if (!isOverlap(canvas, brick, left, top, false)) {
+        const nonRotatedUtilization = calculateUtilization(
+          canvas,
+          brick,
+          left,
+          top,
+          false
+        );
+        if (nonRotatedUtilization == 1) {
+          return { left, top, rotated: false };
+        }
+        if (nonRotatedUtilization > bestUtilization) {
+          bestUtilization = nonRotatedUtilization;
+          bestFit = { left, top, rotated: false };
+        }
+        if (
+          brick.width !== brick.height &&
+          !isOverlap(canvas, brick, left, top, true)
+        ) {
+          const rotatedUtilization = calculateUtilization(
+            canvas,
+            brick,
+            left,
+            top,
+            true
+          );
+          if (rotatedUtilization == 1) {
+            return { left, top, rotated: true };
+          }
+          if (rotatedUtilization > bestUtilization) {
+            bestUtilization = rotatedUtilization;
+            bestFit = { left, top, rotated: true };
+          }
+        }
       }
     }
   }
-  return null;
+  return bestFit;
+}
+
+function calculateUtilization(canvas, brick, left, top, rotated = false) {
+  const checkBrick = rotated
+    ? { width: brick.height, height: brick.width }
+    : brick;
+
+  const grid = Array.from({ length: canvas.height }, () =>
+    Array(canvas.width).fill(false)
+  );
+
+  for (const placedBrick of canvas.bricks) {
+    for (
+      let i = placedBrick.top;
+      i < placedBrick.top + placedBrick.height;
+      i++
+    ) {
+      for (
+        let j = placedBrick.left;
+        j < placedBrick.left + placedBrick.width;
+        j++
+      ) {
+        grid[i][j] = true;
+      }
+    }
+  }
+
+  for (let i = top; i < top + checkBrick.height; i++) {
+    for (let j = left; j < left + checkBrick.width; j++) {
+      grid[i][j] = true;
+    }
+  }
+
+  internalGaps = 0;
+  grid.reverse();
+  for (let i = 1; i < this.height - 1; i++) {
+    for (let j = 1; j < this.width - 1; j++) {
+      if (!grid[i][j] && grid[i][j - 1] && grid[i - 1][j]) {
+        let startPos = j;
+        let endPos = j;
+        while (grid[i - 1][endPos] && !grid[i][endPos]) {
+          if (
+            (!grid[i - 1][endPos + 1] && grid[i][endPos + 1]) ||
+            (grid[i - 1][endPos + 1] && grid[i][endPos + 1])
+          ) {
+            this.internalGaps += endPos + 1 - startPos;
+            grid[i].fill(true, startPos, endPos + 1);
+          }
+          endPos += 1;
+        }
+      }
+    }
+  }
+  const brickArea = canvas.bricks.reduce(
+    (area, placedBrick) => area + placedBrick.width * placedBrick.height,
+    0
+  );
+  const fullness = 1 - internalGaps / (internalGaps + brickArea);
+
+  return fullness;
 }
 
 function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
-  bricks.sort((a, b) => b.width * b.height - a.width * a.height);
   bricks.forEach((brick, index) => {
-    brick.initialOrder = index;
+    brick.initialOrder = brick.initialOrder ?? index;
   });
+  bricks.sort((a, b) => b.width * b.height - a.width * a.height);
 
   const canvas = new Canvas(canvaWidth, canvaHeight);
 
@@ -156,10 +243,13 @@ const getRandomColor = () => {
 };
 
 function drawBricks(ctx, canvas) {
+  const dimensionColorMap = {};
   for (const brick of canvas.bricks) {
-    brick.color
-      ? (ctx.fillStyle = brick.color)
-      : ((ctx.fillStyle = getRandomColor()), (brick.color = ctx.fillStyle));
+    const dimensionKey = `${brick.width}_${brick.height}`;
+    brick.color = dimensionColorMap[dimensionKey] || getRandomColor();
+    dimensionColorMap[dimensionKey] = brick.color;
+
+    ctx.fillStyle = brick.color;
     ctx.fillRect(brick.left, brick.top, brick.width, brick.height);
 
     if (brick.initialOrder >= 0) {
@@ -170,21 +260,17 @@ function drawBricks(ctx, canvas) {
         25,
         25
       );
-      ctx.save()
-      ctx.translate(brick.left + brick.width / 2 + 10, brick.top + brick.height / 2 - 7)
+      ctx.save();
+      ctx.translate(
+        brick.left + brick.width / 2 + 10,
+        brick.top + brick.height / 2 - 7
+      );
       ctx.rotate(Math.PI);
       ctx.fillStyle = "black";
       ctx.font = "20px Arial";
       ctx.fillText(brick.initialOrder, 0, 0);
-      ctx.restore()
+      ctx.restore();
     }
-
-    // else {
-    //   brick.color
-    //     ? (ctx.fillStyle = brick.color)
-    //     : ((ctx.fillStyle = getRandomColor()), (brick.color = ctx.fillStyle));
-    //   ctx.fillRect(brick.left, brick.top, brick.width, brick.height);
-    // }
   }
 }
 
@@ -193,36 +279,49 @@ function drawBricks(ctx, canvas) {
 const getElems = () => {
   const app = document.querySelector(".app");
   //canvas
-  const c = document.querySelector("#myCanvas");
-  const ctx = c.getContext("2d");
+  const canvas = document.querySelector("#myCanvas");
+  const ctx = canvas.getContext("2d");
 
   const fullnessPlace = document.querySelector("#fullnessPlace");
-  return { app, ctx, fullnessPlace };
+  return { app, canvas, ctx, fullnessPlace };
 };
 
 //Setting canvas properties (Width, Height, ...)
-const setCanvasProperies = (ctx, app) => {
-  ctx.canvas.width = app.clientWidth;
-  ctx.canvas.height = app.clientHeight * 0.9;
+const setCanvasProperties = (canvas, ctx, app) => {
+  canvas.width = app.clientWidth;
+  canvas.height = app.clientHeight * 0.9;
   //color
   ctx.fillStyle = "beige";
-  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+};
+
+const watchCanvasChanges = () => {
+  window.addEventListener("resize", () => {
+    const { app, canvas, ctx, fullnessPlace } = getElems();
+    setCanvasProperties(canvas, ctx, app);
+    let bestBrickLayout = findBestBrickLayout(
+      enterBricks,
+      canvas.width,
+      canvas.height
+    );
+    fullnessPlace.textContent =
+      (bestBrickLayout.countFullness() * 100).toFixed(2) + "%";
+    drawBricks(ctx, bestBrickLayout);
+  });
 };
 
 function init() {
-  const { app, ctx, fullnessPlace } = getElems();
-  setCanvasProperies(ctx, app);
+  const { app, canvas, ctx, fullnessPlace } = getElems();
+  setCanvasProperties(canvas, ctx, app);
   let bestBrickLayout = findBestBrickLayout(
     enterBricks,
-    ctx.canvas.width,
-    ctx.canvas.height
+    canvas.width,
+    canvas.height
   );
-
   fullnessPlace.textContent =
     (bestBrickLayout.countFullness() * 100).toFixed(2) + "%";
   drawBricks(ctx, bestBrickLayout);
+  watchCanvasChanges();
 }
 
 init();
-
-window.addEventListener("resize", init);
