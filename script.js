@@ -188,8 +188,8 @@ function calculateUtilization(canvas, brick, left, top, rotated = false) {
 
   internalGaps = 0;
   grid.reverse();
-  for (let i = 1; i < this.height - 1; i++) {
-    for (let j = 1; j < this.width - 1; j++) {
+  for (let i = 1; i < canvas.height - 1; i++) {
+    for (let j = 1; j < canvas.width - 1; j++) {
       if (!grid[i][j] && grid[i][j - 1] && grid[i - 1][j]) {
         let startPos = j;
         let endPos = j;
@@ -198,7 +198,7 @@ function calculateUtilization(canvas, brick, left, top, rotated = false) {
             (!grid[i - 1][endPos + 1] && grid[i][endPos + 1]) ||
             (grid[i - 1][endPos + 1] && grid[i][endPos + 1])
           ) {
-            this.internalGaps += endPos + 1 - startPos;
+            internalGaps += endPos + 1 - startPos;
             grid[i].fill(true, startPos, endPos + 1);
           }
           endPos += 1;
@@ -208,10 +208,10 @@ function calculateUtilization(canvas, brick, left, top, rotated = false) {
   }
   const brickArea = canvas.bricks.reduce(
     (area, placedBrick) => area + placedBrick.width * placedBrick.height,
-    0
+    brick.width * brick.height
   );
   const fullness = 1 - internalGaps / (internalGaps + brickArea);
-
+  console.log(fullness);
   return fullness;
 }
 
