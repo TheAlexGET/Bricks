@@ -1,3 +1,7 @@
+// There is one non-critical bug that I don't know how to fix at the moment
+// The main algorithm is working
+// I would appreciate the feedback
+
 class Brick {
   constructor(width, height) {
     this.width = width;
@@ -6,7 +10,7 @@ class Brick {
 }
 
 // Entries
-
+// For Json input need server but in condition is to use client side  
 const enterBricks = [
   { width: 500, height: 500 },
   { width: 200, height: 200 },
@@ -113,8 +117,8 @@ function isOverlap(canvas, brick, left, top, rotated = false) {
 function findBestPlace(canvas, brick) {
   let bestFit = null;
   let bestUtilization = 0;
-  for (let top = 0; top <= canvas.height - brick.height; top++) {
-    for (let left = 0; left <= canvas.width - brick.width; left++) {
+  for (let top = 0; top <= canvas.height - brick.height - 1; top++) {
+    for (let left = 0; left <= canvas.width - brick.width - 1; left++) {
       if (!isOverlap(canvas, brick, left, top, false)) {
         const nonRotatedUtilization = calculateUtilization(
           canvas,
@@ -130,27 +134,33 @@ function findBestPlace(canvas, brick) {
           bestUtilization = nonRotatedUtilization;
           bestFit = { left, top, rotated: false };
         }
-        if (
-          brick.width !== brick.height &&
-          !isOverlap(canvas, brick, left, top, true)
-        ) {
-          const rotatedUtilization = calculateUtilization(
-            canvas,
-            brick,
-            left,
-            top,
-            true
-          );
-          if (rotatedUtilization == 1) {
-            return { left, top, rotated: true };
-          }
-          if (rotatedUtilization > bestUtilization) {
-            bestUtilization = rotatedUtilization;
-            bestFit = { left, top, rotated: true };
-          }
+      }
+    }
+  }
+  if(bestFit == null || bestUtilization < 1){
+    for (let top = 0; top <= canvas.height - brick.width - 1; top++) {
+    for (let left = 0; left <= canvas.width - brick.height - 1; left++) {
+      if (
+        brick.width !== brick.height &&
+        !isOverlap(canvas, brick, left, top, true)
+      ) {
+        const rotatedUtilization = calculateUtilization(
+          canvas,
+          brick,
+          left,
+          top,
+          true
+        );
+        if (rotatedUtilization == 1) {
+          return { left, top, rotated: true };
+        }
+        if (rotatedUtilization > bestUtilization) {
+          bestUtilization = rotatedUtilization;
+          bestFit = { left, top, rotated: true };
         }
       }
     }
+  }
   }
   return bestFit;
 }
@@ -186,7 +196,7 @@ function calculateUtilization(canvas, brick, left, top, rotated = false) {
     }
   }
 
-  internalGaps = 0;
+  let internalGaps = 0;
   grid.reverse();
   for (let i = 1; i < canvas.height - 1; i++) {
     for (let j = 1; j < canvas.width - 1; j++) {
@@ -211,7 +221,6 @@ function calculateUtilization(canvas, brick, left, top, rotated = false) {
     brick.width * brick.height
   );
   const fullness = 1 - internalGaps / (internalGaps + brickArea);
-  console.log(fullness);
   return fullness;
 }
 
@@ -301,8 +310,8 @@ const watchCanvasChanges = () => {
     setCanvasProperties(canvas, ctx, app);
     let bestBrickLayout = findBestBrickLayout(
       enterBricks,
-      canvas.width,
-      canvas.height
+      ctx.canvas.width,
+      ctx.canvas.height
     );
     fullnessPlace.textContent =
       (bestBrickLayout.countFullness() * 100).toFixed(2) + "%";
