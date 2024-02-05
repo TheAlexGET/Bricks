@@ -40,17 +40,9 @@ class Canvas {
   constructor(width, height) {
     this.width = width;
     this.height = height;
-    this.bricks = [
-      { left: 0, top: 0, width: 1, height: this.height, color: "#6185f8" },
-      {
-        left: this.width - 1,
-        top: 0,
-        width: 1,
-        height: this.height,
-        color: "#6185f8",
-      },
-    ];
+    this.bricks = [];
     this.internalGaps = 0;
+    this.updateInternalGaps()
   }
 
   addBrick(brick, left, top, rotated = false) {
@@ -84,21 +76,29 @@ class Canvas {
     }
 
     this.internalGaps = 0;
-    grid.reverse();
-    for (let i = 1; i < this.height - 1; i++) {
-      for (let j = 1; j < this.width - 1; j++) {
-        if (!grid[i][j] && grid[i][j - 1] && grid[i - 1][j]) {
+    let tempGrid = grid.map(row => row.slice());
+
+    for (let i = tempGrid.length-2; i >= 0; i--) { // minus 2 to start from pre last row
+      for (let j = tempGrid[i].length; j >= 0; j--) {
+        if (
+          (!tempGrid[i][j] && tempGrid[i][j + 1] && tempGrid[i + 1][j]) ||
+          (!tempGrid[i][j] &&
+            tempGrid[i][j + 1] === undefined &&
+            tempGrid[i + 1][j])
+        ) {
           let startPos = j;
           let endPos = j;
-          while (grid[i - 1][endPos] && !grid[i][endPos]) {
+          while (tempGrid[i + 1][endPos] && !tempGrid[i][endPos]) {
             if (
-              (!grid[i - 1][endPos + 1] && grid[i][endPos + 1]) ||
-              (grid[i - 1][endPos + 1] && grid[i][endPos + 1])
+              (!tempGrid[i + 1][endPos - 1] && tempGrid[i][endPos - 1]) ||
+              (tempGrid[i + 1][endPos - 1] && tempGrid[i][endPos - 1]) ||
+              (tempGrid[i + 1][endPos - 1] === undefined &&
+                tempGrid[i][endPos - 1] === undefined)
             ) {
-              this.internalGaps += endPos + 1 - startPos;
-              grid[i].fill(true, startPos, endPos + 1);
+              this.internalGaps += startPos - endPos + 1;
+              tempGrid[i].fill(true, endPos, startPos + 1);
             }
-            endPos += 1;
+            endPos -= 1;
           }
         }
       }
@@ -205,26 +205,35 @@ function calculateUtilization(canvas, brick, left, top, rotated = false) {
     }
   }
 
+  let tempGrid = grid.map(row => row.slice());
   let internalGaps = 0;
-  grid.reverse();
-  for (let i = 1; i < canvas.height - 1; i++) {
-    for (let j = 1; j < canvas.width - 1; j++) {
-      if (!grid[i][j] && grid[i][j - 1] && grid[i - 1][j]) {
+
+  for (let i = tempGrid.length-2; i >= 0; i--) { // minus 2 to start from pre last row
+    for (let j = tempGrid[i].length; j >= 0; j--) {
+      if (
+        (!tempGrid[i][j] && tempGrid[i][j + 1] && tempGrid[i + 1][j]) ||
+        (!tempGrid[i][j] &&
+          tempGrid[i][j + 1] === undefined &&
+          tempGrid[i + 1][j])
+      ) {
         let startPos = j;
         let endPos = j;
-        while (grid[i - 1][endPos] && !grid[i][endPos]) {
+        while (tempGrid[i + 1][endPos] && !tempGrid[i][endPos]) {
           if (
-            (!grid[i - 1][endPos + 1] && grid[i][endPos + 1]) ||
-            (grid[i - 1][endPos + 1] && grid[i][endPos + 1])
+            (!tempGrid[i + 1][endPos - 1] && tempGrid[i][endPos - 1]) ||
+            (tempGrid[i + 1][endPos - 1] && tempGrid[i][endPos - 1]) ||
+            (tempGrid[i + 1][endPos - 1] === undefined &&
+              tempGrid[i][endPos - 1] === undefined)
           ) {
-            internalGaps += endPos + 1 - startPos;
-            grid[i].fill(true, startPos, endPos + 1);
+            internalGaps += startPos - endPos + 1;
+            tempGrid[i].fill(true, endPos, startPos + 1);
           }
-          endPos += 1;
+          endPos -= 1;
         }
       }
     }
   }
+
   const brickArea = canvas.bricks.reduce(
     (area, placedBrick) => area + placedBrick.width * placedBrick.height,
     brick.width * brick.height
