@@ -1,38 +1,68 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body{
+body {
   background-color: #6185f8;
 }
 
-.app{
+.app {
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 80%;
   margin-left: 10%;
+  
+  /* Got this from web, bricks like in Mario */
+  --units: 0.5vmax;
+  --brick1: #cc0000;
+  --brick2: #dd0000;
+  --lines: black;
+  --gp-ln: 50% / calc(var(--units) * 10) calc(var(--units) * 5);
+  --gp-cn: 50% / calc(var(--units) * 5) calc(var(--units) * 5);
   height: 100vh;
-  background-color: #eeaf36;
+  background: repeating-conic-gradient(
+        from 90deg at 95% 55%,
+        var(--lines) 0% 25%,
+        #fff0 0% 100%
+      )
+      var(--gp-cn),
+    repeating-linear-gradient(
+        180deg,
+        var(--lines) 0 5%,
+        #fff0 0 50%,
+        var(--lines) 0 55%,
+        var(--brick2) 0 100%
+      )
+      var(--gp-ln),
+    repeating-linear-gradient(
+        90deg,
+        var(--brick1) 0 47.5%,
+        var(--lines) 0 50%,
+        var(--brick1) 0 97.5%,
+        var(--lines) 0 100%
+      )
+      var(--gp-ln);
 }
-
-.stats h3{
+.stats h3 {
   align-self: flex-start;
   font-family: "Press Start 2P";
   font-weight: 400;
   float: left;
+  background-color: white;
 }
-
-.stats div{
+.stats div {
   align-self: flex-start;
   font-family: "Press Start 2P";
   font-weight: 400;
-  line-height: 23px;
+  line-height: 19px;
   float: left;
+  background-color: white;
 }
 
-canvas{
+canvas {
   transform: rotate(180deg);
+  width: 100%;
 }
