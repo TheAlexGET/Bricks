@@ -14,11 +14,11 @@ body {
   justify-content: center;
   width: 80%;
   margin-left: 10%;
-  
+
   /* Got this from web, bricks like in Mario */
   --units: 0.5vmax;
-  --brick1: #cc0000;
-  --brick2: #dd0000;
+  --brick1: #DF5900;
+  --brick2: #EF6000;
   --lines: black;
   --gp-ln: 50% / calc(var(--units) * 10) calc(var(--units) * 5);
   --gp-cn: 50% / calc(var(--units) * 5) calc(var(--units) * 5);
