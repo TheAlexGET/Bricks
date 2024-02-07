@@ -1,4 +1,13 @@
-function drawBricks(ctx, canvas) {
+const getRandomColor = () => {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
+export function drawBricks(ctx, canvas) {
   const dimensionColorMap = {};
   for (const brick of canvas.bricks) {
     const dimensionKey = `${brick.width}_${brick.height}`;
