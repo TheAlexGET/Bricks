@@ -66,3 +66,29 @@ canvas {
   transform: rotate(180deg);
   width: 100%;
 }
+
+.buttons{
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  margin-left: 5%;
+}
+
+.generateBtn{
+  padding: 20px 20px;
+  font-family: "Press Start 2P";
+  font-weight: 400;
+
+  /* styling */
+  border: none;
+  border-radius: 5px;
+  background-color: rgb(255, 213, 0);
+  cursor: pointer;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s; /* Safari */
+}
+
+.generateBtn:hover{
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4), 0 6px 20px 0 rgba(0,0,0,0.39);
+}

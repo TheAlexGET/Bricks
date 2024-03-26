@@ -1,6 +1,9 @@
 import { drawBricks } from "./components/scripts/UI/drawBricks.js";
 import { getElems, setCanvasProperties } from "./components/scripts/UI/setCanvas.js";
 import { findBestBrickLayout } from "./components/scripts/logic/findBestBrickLayout.js";
+import { generateBricks } from "./components/scripts/logic/generateBricks.js";
+import { watchButtonChanges } from "./components/scripts/logic/watchButtonChanges.js";
+import { watchCanvasChanges } from "./components/scripts/logic/watchCanvasChanges.js";
 
 //Class for setting entries easily
 class Brick {
@@ -25,7 +28,7 @@ const enterBricks = [
 
 //UI + Logic
 function init() {
-  const { app, canvas, ctx, fullnessPlace } = getElems();
+  const { app, canvas, ctx, fullnessPlace, generateBtn} = getElems();
   setCanvasProperties(canvas, ctx, app);
   // Main Logic
   let bestBrickLayout = findBestBrickLayout(
@@ -37,24 +40,8 @@ function init() {
     (bestBrickLayout.countFullness() * 100).toFixed(2) + "%";
   // End of Main Logic
   drawBricks(ctx, bestBrickLayout);
-  watchCanvasChanges();
+  watchCanvasChanges(enterBricks);
+  watchButtonChanges(enterBricks);
 }
-
-const watchCanvasChanges = () => {
-  const { app, canvas, ctx, fullnessPlace } = getElems();
-  window.addEventListener("resize", () => {
-    setCanvasProperties(canvas, ctx, app);
-    // Main Logic
-    let bestBrickLayout = findBestBrickLayout(
-      enterBricks,
-      ctx.canvas.width,
-      ctx.canvas.height
-    );
-    fullnessPlace.textContent =
-      (bestBrickLayout.countFullness() * 100).toFixed(2) + "%";
-    // End of Main Logic
-    drawBricks(ctx, bestBrickLayout);
-  });
-};
 
 init();
