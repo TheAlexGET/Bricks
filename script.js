@@ -14,7 +14,6 @@ class Brick {
 
 // Entries
 const enterBricks = [
-  new Brick(300, 300),
   new Brick(200, 200),
   new Brick(300, 250),
   new Brick(100, 100),
