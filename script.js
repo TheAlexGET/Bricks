@@ -14,7 +14,7 @@ class Brick {
 
 // Entries
 const enterBricks = [
-  new Brick(500, 500),
+  new Brick(300, 300),
   new Brick(200, 200),
   new Brick(300, 250),
   new Brick(100, 100),
@@ -22,7 +22,6 @@ const enterBricks = [
   new Brick(70, 70),
   new Brick(60, 50),
   new Brick(60, 50),
-  new Brick(512, 64),
 ];
 
 //UI + Logic

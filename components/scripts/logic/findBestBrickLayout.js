@@ -1,12 +1,8 @@
 import { Canvas } from "./canvasClass.js";
 
 export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
-  let area = 0;
-  let maxWidth = 0;
-
+  
   bricks.forEach((brick, index) => {
-    area += brick.width * brick.height
-    maxWidth = Math.max(maxWidth, brick.width)
     brick.initialOrder = brick.initialOrder ?? index;
   });
   bricks.sort((a, b) => b.height - a.height);
