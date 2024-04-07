@@ -1,6 +1,4 @@
-import { calculateUtilization } from "./calculateUtilization.js";
 import { Canvas } from "./canvasClass.js";
-import { isOverlap } from "./isOverlap.js";
 
 export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
   let area = 0;
@@ -13,9 +11,6 @@ export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
   });
   bricks.sort((a, b) => b.height - a.height);
 
-  // aim for a squarish resulting container,
-  // slightly adjusted for sub-100% space utilization
-  const startWidth = Math.max(Math.ceil(Math.sqrt(area/0.95)), maxWidth) //remark
   const canvas = new Canvas(canvaWidth, canvaHeight);
 
   const spaces = [{x: 0, y: 0, width: canvaWidth, height: canvaHeight}]
@@ -24,7 +19,7 @@ export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
       const space = spaces[i]
       if (brick.width > space.width || brick.height > space.height) continue
       
-      if (brick.width + space.x > canvaWidth) {
+      if (brick.width + space.x > canvaWidth-5) {
         continue
       }
       canvas.addBrick(brick, space.x, space.y)
