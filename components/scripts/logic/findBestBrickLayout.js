@@ -3,70 +3,54 @@ import { Canvas } from "./canvasClass.js";
 import { isOverlap } from "./isOverlap.js";
 
 export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
+  let area = 0;
+  let maxWidth = 0;
+
   bricks.forEach((brick, index) => {
+    area += brick.width * brick.height
+    maxWidth = Math.max(maxWidth, brick.width)
     brick.initialOrder = brick.initialOrder ?? index;
   });
   bricks.sort((a, b) => b.height - a.height);
 
+  // aim for a squarish resulting container,
+  // slightly adjusted for sub-100% space utilization
+  const startWidth = Math.max(Math.ceil(Math.sqrt(area/0.95)), maxWidth) //remark
   const canvas = new Canvas(canvaWidth, canvaHeight);
 
+  const spaces = [{x: 0, y: 0, width: canvaWidth, height: canvaHeight}]
   for (const brick of bricks) {
-    const bestPlace = findBestPlace(canvas, brick);
+    for (let i = spaces.length-1; i >= 0; i--) {
+      const space = spaces[i]
+      if (brick.width > space.width || brick.height > space.height) continue
+      
+      canvas.addBrick(brick, space.x, space.y)
+      
+      
 
-    if (bestPlace) {
-      canvas.addBrick(brick, bestPlace.left, bestPlace.top, bestPlace.rotated);
+      if (brick.width === space.width && brick.height === space.height) {
+        const last = spaces.pop()
+        if (i < spaces.length) {
+          spaces[i] = last
+        }
+      } else if (brick.height === space.height) {
+          space.x += brick.width
+          space.w -= brick.width
+      } else if (brick.width === space.width) {
+        space.y += brick.height
+        space.height -= brick.height
+      } else{
+        spaces.push({
+          x: space.x + brick.width,
+          y: space.y,
+          width: space.width - brick.width,
+          height: brick.height
+        })
+        space.y += brick.height;
+        space.height -= brick.height;
+      }
+      break;
     }
   }
   return canvas;
-}
-
-export function findBestPlace(canvas, brick) {
-  let bestFit = null;
-  let bestUtilization = 0;
-  for (let top = 0; top < canvas.height - brick.height; top++) { //if brick doesnt exit otside canvas
-    for (let left = 0; left < canvas.width - brick.width; left++) {
-      if (!isOverlap(canvas, brick, left, top, false)) {
-        const nonRotatedUtilization = calculateUtilization(
-          canvas,
-          brick,
-          left,
-          top,
-          false
-        );
-        if (nonRotatedUtilization == 1) {
-          return { left, top, rotated: false };
-        }
-        if (nonRotatedUtilization > bestUtilization) {
-          bestUtilization = nonRotatedUtilization;
-          bestFit = { left, top, rotated: false };
-        }
-      }
-    }
-  }
-  if(bestFit == null || bestUtilization < 1){
-    for (let top = 0; top <= canvas.height - brick.width - 1; top++) {
-      for (let left = 0; left <= canvas.width - brick.height - 1; left++) {
-        if (
-          brick.width !== brick.height &&
-          !isOverlap(canvas, brick, left, top, true)
-        ) {
-          const rotatedUtilization = calculateUtilization(
-            canvas,
-            brick,
-            left,
-            top,
-            true
-          );
-          if (rotatedUtilization == 1) {
-            return { left, top, rotated: true };
-          }
-          if (rotatedUtilization > bestUtilization) {
-            bestUtilization = rotatedUtilization;
-            bestFit = { left, top, rotated: true };
-          }
-        }
-      }
-    }
-  }
-  return bestFit;
 }
