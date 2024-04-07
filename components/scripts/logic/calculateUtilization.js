@@ -1,4 +1,7 @@
-export function calculateUtilization(canvas, brick, left, top, rotated = false) {
+//Just a function for learning purposes
+//How Internal Gaps are calculated
+
+function calculateUtilization(canvas, brick, left, top, rotated = false) {
   const checkBrick = rotated
     ? { width: brick.height, height: brick.width }
     : brick;

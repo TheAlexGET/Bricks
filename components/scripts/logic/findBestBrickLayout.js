@@ -19,7 +19,7 @@ export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
       const space = spaces[i]
       if (brick.width > space.width || brick.height > space.height) continue
       
-      if (brick.width + space.x > canvaWidth-5) {
+      if (brick.width + space.x > canvaWidth-3) {
         continue
       }
       canvas.addBrick(brick, space.x, space.y)

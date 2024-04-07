@@ -1,4 +1,5 @@
-export function isOverlap(canvas, brick, left, top, rotated = false) {
+//Function from V1 (now is not using)
+function isOverlap(canvas, brick, left, top, rotated = false) {
   const checkBrick = rotated
     ? { width: brick.height, height: brick.width }
     : brick;

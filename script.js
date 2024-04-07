@@ -1,7 +1,6 @@
 import { drawBricks } from "./components/scripts/UI/drawBricks.js";
 import { getElems, setCanvasProperties } from "./components/scripts/UI/setCanvas.js";
 import { findBestBrickLayout } from "./components/scripts/logic/findBestBrickLayout.js";
-import { generateBricks } from "./components/scripts/logic/generateBricks.js";
 import { watchButtonChanges } from "./components/scripts/logic/watchButtonChanges.js";
 import { watchCanvasChanges } from "./components/scripts/logic/watchCanvasChanges.js";
 
