@@ -22,7 +22,7 @@ body {
   --lines: black;
   --gp-ln: 50% / calc(var(--units) * 10) calc(var(--units) * 5);
   --gp-cn: 50% / calc(var(--units) * 5) calc(var(--units) * 5);
-  height: 100vh;
+  height: 100svh;
   background: repeating-conic-gradient(
         from 90deg at 95% 55%,
         var(--lines) 0% 25%,
