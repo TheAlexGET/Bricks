@@ -12,13 +12,13 @@ export class Canvas {
       [brick.width, brick.height] = [brick.height, brick.width];
     }
     this.bricks.push({ ...brick, left, top, rotated });
-    this.updateInternalGaps();
   }
 
   countFullness() {
     if (!this.bricks.length) {
       return 0
     }
+    this.updateInternalGaps();
     const brickArea = this.bricks.reduce(
       (area, brick) => (area += brick.width * brick.height),
       0
