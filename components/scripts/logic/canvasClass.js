@@ -4,7 +4,6 @@ export class Canvas {
     this.height = height;
     this.bricks = [];
     this.internalGaps = 0;
-    this.updateInternalGaps()
   }
 
   addBrick(brick, left, top, rotated = false) {
