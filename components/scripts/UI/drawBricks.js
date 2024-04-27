@@ -18,6 +18,7 @@ export function drawBricks(ctx, canvas) {
     ctx.fillRect(brick.left, brick.top, brick.width, brick.height);
 
     if (brick.initialOrder >= 0) {
+      //White rectangle for number
       ctx.fillStyle = "white";
       ctx.fillRect(
         brick.left + brick.width / 2 - 12.5,
@@ -27,12 +28,12 @@ export function drawBricks(ctx, canvas) {
       );
       ctx.save();
       ctx.translate(
-        brick.left + brick.width / 2 + 10,
-        brick.top + brick.height / 2 - 7
+        brick.left + brick.width / 2 + 11, //number x-cord from right to left when adding
+        brick.top + brick.height / 2 - 5 // number y-cord from top to bottom when decreasing
       );
       ctx.rotate(Math.PI);
       ctx.fillStyle = "black";
-      ctx.font = "20px Arial";
+      ctx.font = "14px Arial";
       ctx.fillText(brick.initialOrder, 0, 0);
       ctx.restore();
     }
