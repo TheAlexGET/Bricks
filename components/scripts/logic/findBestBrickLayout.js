@@ -15,9 +15,14 @@ export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
       const space = spaces[i]
       if (brick.width > space.width || brick.height > space.height) continue
       
-      if (brick.width + space.x > canvaWidth-3) {
+      //Brick should'nt go beyond canvas
+      if (brick.width + space.x > canvaWidth) {
         continue
       }
+      if (brick.height + space.y > canvaHeight) {
+        continue
+      }
+
       canvas.addBrick(brick, space.x, space.y)
 
       if (brick.width === space.width && brick.height === space.height) {
@@ -33,13 +38,13 @@ export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
         space.height -= brick.height
       } else{
         spaces.push({
-          x: space.x + brick.width,
-          y: space.y,
-          width: space.width - brick.width,
-          height: brick.height
+          x: space.x,
+          y: space.y + brick.height,
+          width: brick.width,
+          height: space.height - brick.y
         })
-        space.y += brick.height;
-        space.height -= brick.height;
+        space.x += brick.width;
+        space.width -= brick.width;
       }
       break;
     }
