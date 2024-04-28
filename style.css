@@ -50,6 +50,7 @@ body {
   align-self: flex-start;
   font-family: "Press Start 2P";
   font-weight: 400;
+  padding: 1px;
   float: left;
   background-color: white;
 }

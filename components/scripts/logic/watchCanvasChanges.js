@@ -4,7 +4,7 @@ import { findBestBrickLayout } from "./findBestBrickLayout.js";
 
 
 export const watchCanvasChanges = (enterBricks) => {
-  const { app, canvas, ctx, fullnessPlace } = getElems();
+  const { app, canvas, ctx, fullnessPlace, packedPlace} = getElems();
   window.addEventListener("resize", () => {
     setCanvasProperties(canvas, ctx, app);
     // Main Logic
@@ -15,7 +15,7 @@ export const watchCanvasChanges = (enterBricks) => {
     );
     fullnessPlace.textContent =
       (bestBrickLayout.countFullness() * 100).toFixed(2) + "%";
-      console.log(bestBrickLayout.getBricksCount() + ' / ' + enterBricks.length);
+      packedPlace.textContent = (bestBrickLayout.getBricksCount() + '/' + enterBricks.length);
     // End of Main Logic
     drawBricks(ctx, bestBrickLayout);
   });

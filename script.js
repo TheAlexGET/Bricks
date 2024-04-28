@@ -25,7 +25,7 @@ const enterBricks = [
 
 //UI + Logic
 function init() {
-  const { app, canvas, ctx, fullnessPlace, generateBtn} = getElems();
+  const { app, canvas, ctx, fullnessPlace, packedPlace} = getElems();
   setCanvasProperties(canvas, ctx, app);
   // Main Logic
   let bestBrickLayout = findBestBrickLayout(
@@ -35,7 +35,7 @@ function init() {
   );
   fullnessPlace.textContent =
     (bestBrickLayout.countFullness() * 100).toFixed(2) + "%";
-  console.log(bestBrickLayout.getBricksCount() + ' / ' + enterBricks.length);
+  packedPlace.textContent = (bestBrickLayout.getBricksCount() + '/' + enterBricks.length);
   // End of Main Logic
   drawBricks(ctx, bestBrickLayout);
   watchCanvasChanges(enterBricks);

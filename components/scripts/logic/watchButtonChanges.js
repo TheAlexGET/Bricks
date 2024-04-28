@@ -5,7 +5,7 @@ import { generateBricks } from "./generateBricks.js";
 
 
 export const watchButtonChanges = (enterBricks) => {
-  const { app, canvas, ctx, fullnessPlace, generateBtn} = getElems();
+  const { app, canvas, ctx, fullnessPlace, generateBtn, packedPlace} = getElems();
   generateBtn.addEventListener('click', () => {
     setCanvasProperties(canvas, ctx, app);
     // Main Logic
@@ -17,7 +17,7 @@ export const watchButtonChanges = (enterBricks) => {
     );
     fullnessPlace.textContent =
       (bestBrickLayout.countFullness() * 100).toFixed(2) + "%";
-      console.log(bestBrickLayout.getBricksCount() + ' / ' + enterBricks.length);
+      packedPlace.textContent = (bestBrickLayout.getBricksCount() + '/' + enterBricks.length);
     // End of Main Logic
     drawBricks(ctx, bestBrickLayout);
   })

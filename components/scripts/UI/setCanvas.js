@@ -6,8 +6,9 @@ export const getElems = () => {
   const ctx = canvas.getContext("2d");
 
   const fullnessPlace = document.querySelector("#fullnessPlace");
+  const packedPlace = document.querySelector('#packedPlace')
   const generateBtn = document.querySelector(".generateBtn")
-  return { app, canvas, ctx, fullnessPlace, generateBtn};
+  return { app, canvas, ctx, fullnessPlace, generateBtn, packedPlace};
 };
 
 export const setCanvasProperties = (canvas, ctx, app) => {
