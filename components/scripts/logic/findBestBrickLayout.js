@@ -5,7 +5,7 @@ export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
   bricks.forEach((brick, index) => {
     brick.initialOrder = brick.initialOrder ?? index;
   });
-  bricks.sort((a, b) => b.height - a.height);
+  bricks.sort((a, b) => b.width * b.height - a.width * a.height);
 
   const canvas = new Canvas(canvaWidth, canvaHeight);
 

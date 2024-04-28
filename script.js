@@ -35,6 +35,7 @@ function init() {
   );
   fullnessPlace.textContent =
     (bestBrickLayout.countFullness() * 100).toFixed(2) + "%";
+  console.log(bestBrickLayout.getBricksCount() + ' / ' + enterBricks.length);
   // End of Main Logic
   drawBricks(ctx, bestBrickLayout);
   watchCanvasChanges(enterBricks);

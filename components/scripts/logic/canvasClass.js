@@ -13,6 +13,10 @@ export class Canvas {
     this.bricks.push({ ...brick, left, top, rotated });
   }
 
+  getBricksCount(){
+    return this.bricks.length
+  }
+
   countFullness() {
     if (!this.bricks.length) {
       return 0
