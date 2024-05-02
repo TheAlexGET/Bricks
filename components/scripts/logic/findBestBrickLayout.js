@@ -5,8 +5,7 @@ export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
   bricks.forEach((brick, index) => {
     brick.initialOrder = brick.initialOrder ?? index;
   });
-  bricks.sort((a, b) => b.width * b.height - a.width * a.height);
-
+  bricks.sort((a, b) => b.width - a.width);
   const canvas = new Canvas(canvaWidth, canvaHeight);
 
   const spaces = [{x: 0, y: 0, width: canvaWidth, height: canvaHeight}]
@@ -17,9 +16,11 @@ export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
       
       //Brick should'nt go beyond canvas
       if (brick.width + space.x > canvaWidth) {
+        console.log('width', brick);
         continue
       }
       if (brick.height + space.y > canvaHeight) {
+        console.log('height', brick);
         continue
       }
 
