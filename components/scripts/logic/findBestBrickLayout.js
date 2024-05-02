@@ -16,11 +16,9 @@ export function findBestBrickLayout(bricks, canvaWidth, canvaHeight) {
       
       //Brick should'nt go beyond canvas
       if (brick.width + space.x > canvaWidth) {
-        console.log('width', brick);
         continue
       }
       if (brick.height + space.y > canvaHeight) {
-        console.log('height', brick);
         continue
       }
 
